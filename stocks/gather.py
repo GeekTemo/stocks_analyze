@@ -6,7 +6,7 @@ import requests
 
 
 # [name, code]
-def get_stocks():
+def gather_stocks():
     url = 'http://quote.eastmoney.com/stocklist.html'
     r = requests.get(url)
     r.encoding = 'gbk'
@@ -17,9 +17,18 @@ def get_stocks():
     import re
     pattern = '(.*)\((.*)\)'
     stocks = []
+    local = 'sh'
     for s in data:
         stock = s.text
+        url = s.attrib['href']
         m = re.match(pattern, stock)
-        stocks.append((m.groups()[0], m.groups()[1]))
+        name, code = m.groups()
+        if code == '000001':
+            local = 'sz'
+        stocks.append((name, code, local, url))
     return stocks
+
+gather_stocks()
+
+
 
