@@ -5,6 +5,11 @@ from pyquery import PyQuery as pq
 import requests
 
 
+def _query(html, css_path):
+    d = pq(html)
+    return d(css_path)
+
+
 # [name, code]
 def gather_stocks():
     url = 'http://quote.eastmoney.com/stocklist.html'
@@ -28,7 +33,16 @@ def gather_stocks():
         stocks.append((name, code, local, url))
     return stocks
 
-gather_stocks()
+
+def gather_stock_sessions(stock_url):
+    r = requests.get(stock_url)
+    r.encoding = 'gbk'
+    html = r.text
+    css_path = 'table.yfw td.txtl'
+    data = _query(html, css_path)
+    values = [v.text for v in data]
+    return values
+    #open, highest_price, limit_up, turnover_rate, volume, price_earnings, total_market_cap = values
 
 
-
+print gather_stock_sessions('http://quote.eastmoney.com/sz002217.html')
