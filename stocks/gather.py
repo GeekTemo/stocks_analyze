@@ -1,8 +1,8 @@
 # -*- coding:utf-8 -*-
 __author__ = 'gongxingfa'
 
-from pyquery import PyQuery as pq
-import requests
+#from pyquery import PyQuery as pq
+#import requests
 
 
 def _query(html, css_path):
@@ -33,16 +33,15 @@ def gather_stocks():
         stocks.append((name, code, local, url))
     return stocks
 
-
+from splinter import Browser
+browser = Browser()
 def gather_stock_sessions(stock_url):
-    r = requests.get(stock_url)
-    r.encoding = 'gbk'
-    html = r.text
+    browser.visit(stock_url)
     css_path = 'table.yfw td.txtl'
-    data = _query(html, css_path)
+    data = browser.find_by_css(css_path)
     values = [v.text for v in data]
     return values
     #open, highest_price, limit_up, turnover_rate, volume, price_earnings, total_market_cap = values
 
 
-print gather_stock_sessions('http://quote.eastmoney.com/sz002217.html')
+print(gather_stock_sessions('http://quote.eastmoney.com/sz002217.html'))
