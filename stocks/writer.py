@@ -1,29 +1,39 @@
 # -*- coding:utf-8 -*-
 __author__ = 'gongxingfa'
 
-
-def write_stocks(conn, stocks):
-    cur = conn.cursor()
-    for name, code, local, url in stocks:
-        sql = "insert into stocks(name, code, local, url) VALUES('%s', '%s', '%s', '%s')" % (name, code, local, url)
-        cur.execute(sql)
-        conn.commit()
+from pony.orm import db_session
+from bo.sqlite_bo import Simple_Sessions
+import json
+from pony.orm import db_session, commit
 
 
-def write_sessions(conn, data):
-    import string
-    t = "INSERT INTO sessions(name, open, prev_close, highest_price, lowest_price, limit_up, limit_down, turnover_rate, quantity_relative, volume, turnover, price_earnings, price_book, total_market_cap, tradable_market_cap, sessions_date, close, grains, gains_drop) VALUES ('$name', '$open', '$prev_close', '$highest_price', '$lowest_price', '$limit_up', '$limit_down', '$turnover_rate', '$quantity_relative', '$volume', '$turnover', '$price_earnings', '$price_book', '$total_market_cap', '$tradable_market_cap', '$sessions_date', '$close', '$grains', '$gains_drop')"
-    t = string.Template(t)
-    cur = conn.cursor()
-    sql = t.substitute(data)
-    cur.execute(sql)
-    conn.commit()
+def new_obj_from_dict(cls, d):
+    obj = cls()
+    for key, value in items(d):
+        setattr(obj, key, value)
+    return obj
 
-from gather import gather_stocks
+@db_session
+def write_simple_sessions(simple_sessions):
+    data = json.loads(simple_sessions)
+    ss = new_obj_from_dict(Simple_Sessions, data)
+    commit()
 
-stocks = gather_stocks()
 
-import sqlite3
+def writer(ch, method, properties, body):
+    write_simple_sessions(str(body))
+    print(" [x] Received %s" % (str(body),))
 
-conn = sqlite3.connect('/Users/gongxingfa/stocks_analyze.db')
-write_stocks(conn, stocks)
+def start_writer():
+    import pika
+    connection = pika.BlockingConnection(pika.ConnectionParameters(
+            host='localhost'))
+    channel = connection.channel()
+    channel.queue_declare(queue='simple_sessions')
+    channel.basic_consume(writer,
+                      queue='simple_sessions',
+                      no_ack=True)
+    channel.start_consuming()
+
+if __name__ == '__main__':
+    start_writer()

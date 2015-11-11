@@ -9,32 +9,26 @@ db = Database("sqlite", r'C:\Users\GongXingFa\PycharmProjects\stocks_analyze\bo\
 class Stocks(db.Entity):
     _table_ = "stocks"
     id = PrimaryKey(int, auto=True)
-    name = Required(str)
-    code = Required(str)
-    local = Optional(str)
-    url = Optional(str)
-
-class Stocks2(db.Entity):
-    _table_ = "stocks2"
-    id = PrimaryKey(int, auto=True)
-    name = Required(str)
-    code = Required(str)
+    name = Optional(str)
+    code = Optional(str)
     local = Optional(str)
     url = Optional(str)
 
 class Simple_Sessions(db.Entity):
     _table_ = "simple_sessions"
     id = PrimaryKey(int, auto=True)
-    open = Required(float)
-    prev_close = Required(float)
-    highest_price = Required(float)
-    lowest_price = Required(float)
-    limit_up = Required(float)
-    limit_down = Required(float)
-    close = Required(float)
-    grains = Required(float)
-    gains_drop = Required(float)
-    date_time = Required(datetime)
+    name = Optional(str)
+    code = Optional(str)
+    open = Optional(float)
+    prev_close = Optional(float)
+    highest_price = Optional(float)
+    lowest_price = Optional(float)
+    limit_up = Optional(float)
+    limit_down = Optional(float)
+    close = Optional(float)
+    grains = Optional(float)
+    gains_drop = Optional(float)
+    date_time = Optional(datetime)
 
 
 sql_debug(True)
