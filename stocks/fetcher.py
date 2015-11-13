@@ -4,7 +4,7 @@ from multiprocessing import Process, Queue, Lock
 from splinter import Browser
 from pyquery import PyQuery
 from pony.orm import db_session, commit
-from bo.sqlite_bo import Stocks, Simple_Sessions
+from bo.bo import Stocks, Simple_Sessions
 
 url_queue = Queue()
 html_queue = Queue(256)
@@ -126,24 +126,6 @@ class PersistentProcess(Process):
         Process.__init__(self)
         self.sessions_queue = sessions_queue
 
-    @staticmethod
-    def _new_sessions_from_dict(cls, d):
-        sessions = cls()
-        # sessions.name = d.get('name')
-        # sessions.code = d.get('code')
-        # sessions.open = d.get('open')
-        # sessions.prev_close = d.get('prev_close')
-        # sessions.highest_price = d.get('highest_price')
-        # sessions.lowest_price = d.get('lowest_price')
-        # sessions.limit_up = d.get('limit_up')
-        # sessions.limit_down = d.get('limit_down')
-        # sessions.close = d.get('close')
-        # sessions.grains = d.get('grains')
-        # sessions.gains_drop = d.get('gains_drop')
-        # sessions.date_time = d.get('date_time')
-        sessions.set(**d)
-        return sessions
-
     @db_session
     def run(self):
         while True:
@@ -152,14 +134,6 @@ class PersistentProcess(Process):
             sessions = self.sessions_queue.get()
             simple_sessions = Simple_Sessions()
             simple_sessions.set(**sessions)
-            # simple_sessions = Simple_Sessions(name=sessions['name'], code=sessions['code'], open=sessions['open'],
-            #                                   prev_close=sessions['prev_close'],
-            #                                   highest_price=sessions['highest_price'],
-            #                                   lowest_price=sessions['lowest_price'],
-            #                                   limit_up=sessions['limit_up'], limit_down=sessions['limit_down'],
-            #                                   close=sessions['close'], grains=sessions['grains'],
-            #                                   gains_drop=sessions['gains_drop'],
-            #                                   date_time=sessions['date_time'])
             commit()
             increase_persistent_count()
 

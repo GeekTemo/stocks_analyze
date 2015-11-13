@@ -1,15 +1,36 @@
 __author__ = 'gongxingfa'
 
-from peewee import *
+from pony.orm import *
 
-file_path = inspect.getfile(inspect.currentframe())
-current_dir_path = file_path[0:file_path.rindex('/')]
-db = SqliteDatabase(os.path.join(current_dir_path, 'stocks_analyze.db'))
+db = Database()
 
 
-class BaseModel(Model):
-    class Meta:
-        database = db
+class Stocks(db.Entity):
+    _table_ = "stocks"
+    id = PrimaryKey(int, auto=True)
+    name = Optional(str)
+    code = Optional(str)
+    local = Optional(str)
+    url = Optional(str)
 
-class Stocks(BaseModel):
-    pass
+
+class Simple_Sessions(db.Entity):
+    _table_ = "simple_sessions"
+    id = PrimaryKey(int, auto=True)
+    name = Optional(str)
+    code = Optional(str)
+    open = Optional(float)
+    prev_close = Optional(float)
+    highest_price = Optional(float)
+    lowest_price = Optional(float)
+    limit_up = Optional(float)
+    limit_down = Optional(float)
+    close = Optional(float)
+    grains = Optional(float)
+    gains_drop = Optional(float)
+    date_time = Optional(str)
+
+
+db.bind('mysql', host='localhost', user='root', passwd='root', db='stocks')
+sql_debug(True)
+db.generate_mapping(create_tables=False)

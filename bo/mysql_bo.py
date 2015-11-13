@@ -1,6 +1,5 @@
 __author__ = 'GongXingFa'
 
-from datetime import datetime
 from pony.orm import *
 
 db = Database()
@@ -13,14 +12,6 @@ class Stocks(db.Entity):
     local = Optional(str)
     url = Optional(str)
 
-
-class Stocks2(db.Entity):
-    _table_ = "stocks2"
-    id = PrimaryKey(int, auto=True)
-    name = Required(str)
-    code = Required(str)
-    local = Optional(str)
-    url = Optional(str)
 
 
 
@@ -36,8 +27,8 @@ class Simple_Sessions(db.Entity):
     close = Required(float)
     grains = Required(float)
     gains_drop = Required(float)
-    date_time = Required(datetime)
+    date_time = Required(str)
 
-db.bind('mysql', host='localhost', user='root', passwd='921758', db='stocks')
+db.bind('mysql', host='localhost', user='root', passwd='root', db='stocks')
 sql_debug(True)
-db.generate_mapping(create_tables=True)
+db.generate_mapping(create_tables=False)
