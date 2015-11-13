@@ -47,6 +47,6 @@ def start_gather():
         t.start()
         import time
         time.sleep(1)
-    Thread.join()
+
 
 start_gather()

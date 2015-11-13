@@ -2,8 +2,13 @@ __author__ = 'gongxingfa'
 
 from datetime import datetime
 from pony.orm import *
+import os, sys
+import inspect
 
-db = Database("sqlite", r'C:\Users\GongXingFa\PycharmProjects\stocks_analyze\bo\stocks_analyze.db')
+file_path = inspect.getfile(inspect.currentframe())
+current_dir_path = file_path[0:file_path.rindex('/')]
+
+db = Database("sqlite", os.path.join(current_dir_path, 'stocks_analyze.db'))
 
 
 class Stocks(db.Entity):
@@ -13,6 +18,7 @@ class Stocks(db.Entity):
     code = Optional(str)
     local = Optional(str)
     url = Optional(str)
+
 
 class Simple_Sessions(db.Entity):
     _table_ = "simple_sessions"
@@ -28,7 +34,7 @@ class Simple_Sessions(db.Entity):
     close = Optional(float)
     grains = Optional(float)
     gains_drop = Optional(float)
-    date_time = Optional(datetime)
+    date_time = Optional(str)
 
 
 sql_debug(True)
