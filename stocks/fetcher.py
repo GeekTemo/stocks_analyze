@@ -4,13 +4,16 @@ from multiprocessing import Process, Queue, Lock
 from splinter import Browser
 from pyquery import PyQuery
 from pony.orm import db_session, commit
-from bo.bo import Stocks, Simple_Sessions
+from bo.bo import Stock, Simple_Sessions
+import logging
+
+logging.basicConfig(level=logging.WARNING, datefmt='%a, %d %b %Y %H:%M:%S', )
 
 url_queue = Queue()
 html_queue = Queue(256)
 sessions_queue = Queue(1024)
 with db_session:
-    stocks = Stocks.select_by_sql('select * from stocks')[:]
+    stocks = Stock.select_by_sql('select * from stock')[:]
 STOCKS_COUNT = len(stocks)
 
 web_page_count = 0
@@ -38,9 +41,10 @@ class WebPageProcess(Process):
 
     def run(self):
         browser = Browser('chrome')
+        logging.warning('Process:%s start visit.' % self.name)
         while True:
             if get_page_count() >= STOCKS_COUNT:
-                print('Web Page Finished......')
+                logging.warning('Web Page Process Finished......')
                 return
             url = self.url_queue.get()
             browser.visit(url)
@@ -73,9 +77,10 @@ class HtmlParseProcess(Process):
         self.sessions_queue = sessions_queue
 
     def run(self):
+        logging.warning('HtmlParseProcess:%s start Parse' % self.name)
         while True:
             if get_html_count() >= STOCKS_COUNT:
-                print('Finish Html Parse Finish...')
+                logging.warning('Html Parse Process Finish...')
                 return
             html = self.html_queue.get()
             d = PyQuery(html)
@@ -89,8 +94,8 @@ class HtmlParseProcess(Process):
             limit_up = d('#gt3')[0].text
             limit_down = d('#gt10')[0].text
             close = d('#price9')[0].text
-            grains = d('#km2')[0].text[0:-1]
-            gains_drop = d('#km1')[0].text
+            change_rate = d('#km2')[0].text[0:-1]
+            change_amount = d('#km1')[0].text
             import datetime
             dt = str(datetime.date.today())
             name = d('#name')[0].text
@@ -98,11 +103,10 @@ class HtmlParseProcess(Process):
             session = {'name': name, 'code': code, 'open': open_price, 'prev_close': prev_close,
                        'highest_price': highest_price,
                        'lowest_price': lowest_price, 'limit_up': limit_up, 'limit_down': limit_down, 'close': close,
-                       'grains': grains,
-                       'gains_drop': gains_drop, 'date_time': dt}
+                       'change_rate': change_rate,
+                       'change_amount': change_amount, 'date_time': dt}
             self.sessions_queue.put(session)
             increase_hmtl_count()
-
 
 
 class PersistentProcess(Process):
@@ -112,14 +116,16 @@ class PersistentProcess(Process):
 
     @db_session
     def run(self):
+        logging.warning('PersistentProcess:%s start...' % self.name)
         while True:
             sessions = self.sessions_queue.get()
             simple_sessions = Simple_Sessions()
             simple_sessions.set(**sessions)
             commit()
 
+
 if __name__ == '__main__':
-    web_page_processes = [WebPageProcess(url_queue, html_queue) for i in range(10)]
+    web_page_processes = [WebPageProcess(url_queue, html_queue) for i in range(1)]
     html_parse_process = HtmlParseProcess(html_queue, sessions_queue)
     persistent_process = PersistentProcess(sessions_queue)
     for p in web_page_processes:
@@ -129,4 +135,4 @@ if __name__ == '__main__':
     for s in stocks:
         url_queue.put(s.url)
     persistent_process.join()
-    print('Start Fetcher........')
+    logging.warning('Start Fetcher........')
