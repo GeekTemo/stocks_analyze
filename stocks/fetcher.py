@@ -104,22 +104,6 @@ class HtmlParseProcess(Process):
             increase_hmtl_count()
 
 
-persistent_count = 0
-persistent_count_lock = Lock()
-
-
-def increase_persistent_count():
-    global persistent_count
-    with persistent_count_lock:
-        persistent_count += 1
-
-
-def get_persistent_count():
-    count = 0
-    with persistent_count_lock:
-        count = persistent_count
-    return count
-
 
 class PersistentProcess(Process):
     def __init__(self, sessions_queue):
@@ -129,14 +113,10 @@ class PersistentProcess(Process):
     @db_session
     def run(self):
         while True:
-            if get_persistent_count() >= STOCKS_COUNT:
-                print('Persistent Process Finished....')
             sessions = self.sessions_queue.get()
             simple_sessions = Simple_Sessions()
             simple_sessions.set(**sessions)
             commit()
-            increase_persistent_count()
-
 
 if __name__ == '__main__':
     web_page_processes = [WebPageProcess(url_queue, html_queue) for i in range(10)]
