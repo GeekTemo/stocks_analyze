@@ -2,8 +2,10 @@ __author__ = 'gongxingfa'
 
 from pony.orm import *
 
+#file_path = inspect.getfile(inspect.currentframe())
+#current_dir_path = file_path[0:file_path.rindex('/')]
+#db = Database("sqlite", os.path.join(current_dir_path, 'stocks_analyze.db'))
 db = Database()
-
 
 class Stocks(db.Entity):
     _table_ = "stocks"

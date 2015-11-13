@@ -1,6 +1,6 @@
 __author__ = 'GongXingFa'
 
-from bo.sqlite_bo  import Stocks, Stocks2
+from bo.bo  import Stocks, Stocks2
 from pony.orm import select, db_session, commit
 from splinter import Browser
 
