@@ -36,7 +36,7 @@ def simple_session_parser(html):
 def simple_sessions_handler(data):
     print('.....................................')
     simple_sessions = Simple_Sessions()
-    simple_sessions.set(**sessions)
+    simple_sessions.set(**data)
     commit()
 
 if __name__ == '__main__':
