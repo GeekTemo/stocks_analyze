@@ -45,12 +45,15 @@ class Stock_Index(db.Entity):
     code = Required(str)
     name = Required(str)
     latest_price = Optional(float)
+    change_amount = Optional(float)
+    change_rate = Optional(float)
     volume = Optional(int)
     turnover = Optional(int)
     prev_close = Optional(float)
     open = Optional(float)
     highest = Optional(float)
     lowest = Optional(float)
+    date_time = Optional(str)
 
 
 sql_debug(True)
