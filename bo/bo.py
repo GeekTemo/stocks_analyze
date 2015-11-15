@@ -42,8 +42,8 @@ class Simple_Sessions(db.Entity):
 class Stock_Index(db.Entity):
     _table_ = "stock_index"
     id = PrimaryKey(int, auto=True)
-    code = Required(str)
-    name = Required(str)
+    code = Optional(str)
+    name = Optional(str)
     latest_price = Optional(float)
     change_amount = Optional(float)
     change_rate = Optional(float)

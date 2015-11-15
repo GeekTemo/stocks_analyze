@@ -35,11 +35,12 @@ def stock_index_parser(html):
     start = '<div id="zyzs" class="mod-datas">'
     end = '<div class="space-10">'
     start_index = html.find(start)
+    start_index = start_index if start_index > 0 else html.find('<div class="mod-datas" id="zyzs">')
     end_index = html.find(end, start_index)
     data_div = html[start_index:end_index]
     expr = GenericTranslator().css_to_xpath('tr')
     doc = fromstring(data_div)
-    trs = [e for e in document.xpath(expr)][1:]
+    trs = [e for e in doc.xpath(expr)][1:]
     stock_indexs = []
     for tr in trs:
         tds = tr.getchildren()
