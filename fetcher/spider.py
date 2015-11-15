@@ -15,7 +15,7 @@ class BrowserProcess(Process):
         self.output_queue = output_queue
 
     def run(self):
-        browser = Browser('chrome')
+        browser = Browser('firefox')
         logging.warning('Process:%s start.' % self.name)
         while True:
             url = self.url_queue.get()
@@ -54,9 +54,12 @@ class HtmlParserProcess(Process):
         logging.warning('HtmlParseProcess:%s start Parse' % self.name)
         while True:
             html, parser, handler = self.input_queue.get()
-            data = parser(html)
-            if data:
-                self.output_queue.put((data, handler))
+            try:
+                data = parser(html)
+                if data:
+                    self.output_queue.put((data, handler))
+            except Exception, e:
+                logging.error(html)
 
 
 class HandlerProcess(Process):
@@ -90,6 +93,9 @@ class BrowserSpider(object):
             parser.start()
         for handler in self.handlers:
             handler.start()
+
+    def wait_finish(self):
+        self.dispatcher.join()
 
     def stop(self):
         pass

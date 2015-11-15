@@ -1,7 +1,13 @@
 __author__ = 'gongxingfa'
 
-from bo.bo import Simple_Sessions, Stock_Index
+from bo.bo import Sessions, Simple_Sessions, Stock_Index
 from pony.orm import db_session, commit
+
+@db_session
+def sessions_handler(data):
+    sessions = Sessions()
+    sessions.set(**data)
+    commit()
 
 @db_session
 def simple_sessions_handler(data):

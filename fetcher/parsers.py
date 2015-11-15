@@ -4,6 +4,51 @@ from pyquery import PyQuery
 import datetime
 from lxml.etree import fromstring
 from cssselect import GenericTranslator
+import datetime
+
+
+def _to_float(s):
+    try:
+        v = float(s)
+        return v
+    except ValueError, e:
+        return 0.0
+
+def sessions_parser(html):
+    d = PyQuery(html)
+    open_price = d('#gt1')[0].text
+    if open_price == '-':
+        return ''
+    name = d('#name')[0].text
+    code = d('#code')[0].text
+    prev_close = d('#gt8')[0].text
+    highest_price = d('#gt2')[0].text
+    lowest_price = d('#gt9')[0].text
+    limit_up = d('#gt3')[0].text
+    limit_down = d('#gt10')[0].text
+    close = d('#price9')[0].text
+    change_rate = d('#km2')[0].text[0:-1]
+    change_amount = d('#km1')[0].text
+    turnover_rate = d('#gt4')[0].text[0:-1]
+    quantity_relative = d('#gt11')[0].text
+    volume = d('#gt5')[0].text
+    turnover = d('#gt12')[0].text
+    price_earnings =_to_float(d('#gt6')[0].text)
+    price_book = _to_float(d('#gt13')[0].text)
+    total_market_cap = d('#gt7')[0].text
+    tradable_market_cap = d('#gt14')[0].text
+    date_time = str(datetime.date.today())
+    sessions = dict(name=name, code=code, open=open_price, prev_close=prev_close,
+                    highest_price=highest_price, lowest_price=lowest_price, limit_up=limit_up,
+                    limit_down=limit_down, close=close, change_amount=change_amount,
+                    change_rate=change_rate, turnover_rate=turnover_rate, quantity_relative=quantity_relative,
+                    volume=volume, turnover=turnover, price_earnings=price_earnings, price_book=price_book,
+                    total_market_cap=total_market_cap, tradable_market_cap=tradable_market_cap, date_time=date_time)
+    return sessions
+
+
+
+
 
 
 def simple_session_parser(html):
