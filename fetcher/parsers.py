@@ -16,6 +16,8 @@ def _to_float(s):
 
 def sessions_parser(html):
     d = PyQuery(html)
+    if not d('#gt1'):
+        return ''
     open_price = d('#gt1')[0].text
     if open_price == '-':
         return ''

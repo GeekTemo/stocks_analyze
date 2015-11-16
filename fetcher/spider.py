@@ -54,12 +54,9 @@ class HtmlParserProcess(Process):
         logging.warning('HtmlParseProcess:%s start Parse' % self.name)
         while True:
             html, parser, handler = self.input_queue.get()
-            try:
-                data = parser(html)
-                if data:
-                    self.output_queue.put((data, handler))
-            except Exception, e:
-                logging.error(html)
+            data = parser(html)
+            if data:
+                self.output_queue.put((data, handler))
 
 
 class HandlerProcess(Process):
