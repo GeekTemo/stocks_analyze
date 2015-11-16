@@ -47,6 +47,21 @@ class Sessions(db.Entity):
     tradable_market_cap = Optional(str)
     date_time = Optional(str)
 
+import datetime
+class Real_Time_Trading(db.Entity):
+    _table_ = "real_time_trading"
+    id = PrimaryKey(int, auto=True)
+    name = Optional(str)
+    code = Optional(str)
+    price = Optional(float)
+    change_amount = Optional(float)
+    change_rate = Optional(float)
+    turnover_rate = Optional(float)
+    quantity_relative = Optional(float)
+    volume = Optional(str)
+    turnover = Optional(str)
+    real_time = Optional(datetime.datetime)
+    date_time = Optional(str)
 
 class Simple_Sessions(db.Entity):
     _table_ = "simple_sessions"
