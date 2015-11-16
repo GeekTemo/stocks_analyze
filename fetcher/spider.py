@@ -15,7 +15,7 @@ class BrowserProcess(Process):
         self.output_queue = output_queue
 
     def run(self):
-        browser = Browser('firefox')
+        browser = Browser('chrome')
         logging.warning('Process:%s start.' % self.name)
         while True:
             url = self.url_queue.get()

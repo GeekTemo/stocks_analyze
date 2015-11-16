@@ -14,7 +14,6 @@ if __name__ == '__main__':
     bs.start()
     with db_session:
         stocks = Stock.select_by_sql('select * from stock')[:]
-        print('......len:%d'%len(stocks))
     for s in stocks:
         url_queue.put(s.url)
     bs.wait_finish()
