@@ -79,6 +79,26 @@ class Simple_Sessions(db.Entity):
     change_rate = Optional(float)
     date_time = Optional(str)
 
+class Sessions_History(db.Entity):
+    _table_ = "sessions_history"
+    id = PrimaryKey(int, auto=True)
+    name = Optional(str)
+    code = Optional(str)
+    prev_close = Optional(float)
+    open = Optional(float)
+    highest_price = Optional(float)
+    lowest_price = Optional(float)
+    close = Optional(float)
+    change_amount = Optional(float)
+    change_rate = Optional(float)
+    volume = Optional(float)
+    turnover = Optional(float)
+    total_market_cap = Optional(float)
+    tradable_market_cap = Optional(float)
+    price_earnings = Optional(float)
+    price_book = Optional(float)
+    date_time = Optional(str)
+
 
 class Stock_Index(db.Entity):
     _table_ = "stock_index"

@@ -10,7 +10,7 @@ from handlers import sessions_handler
 
 if __name__ == '__main__':
     url_queue = Queue(1024)
-    bs = BrowserSpider(url_queue, (('.*', sessions_parser, sessions_handler),), browser_nums=5)
+    bs = BrowserSpider(url_queue, (('.*', sessions_parser, sessions_handler),), browser_nums=6)
     bs.start()
     with db_session:
         stocks = Stock.select_by_sql('select * from stock')[:]
